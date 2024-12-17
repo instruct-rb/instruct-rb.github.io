@@ -33,21 +33,21 @@ Here is an example of how you might use Instruct to create a dynamic Q&A loop
 between two agents:
 ```ruby
   # Create two agents: Noel Gallagher and an interviewer with a system prompt.
-  noel = p{"system: You're Noel Gallagher. Answer questions from an interviewer."}
-  interviewer = p{"system: You're a skilled interviewer asking Noel Gallagher questions."}
+  noel = p.system{"You're Noel Gallagher. Answer questions from an interviewer."}
+  interviewer = p.system{"You're a skilled interviewer asking Noel Gallagher questions."}
 
   # We start a dynamic Q&A loop with the interviewer by kicking off the
   # interviewing agent and capturing the response under the :reply key.
-  interviewer << p{"user: __Noel sits down in front of you.__"} + gen.capture(:reply) + "\n".prompt_safe
+  interviewer << p.user{"__Noel sits down in front of you.__"} + gen.capture(:reply)
 
   puts interviewer.captured(:reply) # => "Hello Noel, how are you today?"
 
   5.times do
     # Noel is sent the last value captured in the interviewer's transcript
-    noel << p{"user: <%= interviewer.captured(:reply) %>"} + gen.capture(:reply, list: :replies) + "\n".prompt_safe
+    noel << p.user{"<%= interviewer.captured(:reply) %>"} + gen.capture(:reply, list: :replies)
 
     # Noel's captured reply is now sent to the interviewer
-    interviewer << p{"user: <%=  noel.captured(:reply) %>"} + gen.capture(:reply, list: :replies) + "\n".prompt_safe
+    interviewer << p.user{"<%=  noel.captured(:reply) %>"} + gen.capture(:reply, list: :replies)
   end
 
   # After the conversation, we can access the list captured replies from both agents
@@ -94,8 +94,8 @@ Or pull apart the prompt to create a streaming chatbot that handles user input s
   #  user: Hello, can you help me?
   #  assistant: Sure, what do you need help with?"
 
-  # Note the transcript now has the assistant's response ready for another round
-  # of input.
+  # Note the transcript now has been updated with the expected "assistant: "
+  # part of the transcript.
 ```
 
 To see more examples of how Instruct can be used, check out the [documentation](https://github.com/instruct-rb/instruct).
