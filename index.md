@@ -58,21 +58,22 @@ between two agents:
   # => "noel: ... \n\n interviewer: ..., ..."
 ```
 
-Or pull apart the prompt to create a streaming chatbot that handles user input safely:
+Or pull apart the completion to create a streaming chatbot that handles user input safely:
 
 ```ruby
   # Create a chat transcript with a system prompt.
 
   # Instruct uses inline ERB to interpolate user input into the prompt and mark it as
   # unsafe. Middleware can then perform operations to sanitize the input (guard rails).
-  transcript = p{<<~ERB.chomp
+  prompt = p{<<~ERB.chomp
     system: You're a helpful concise assistant.
     user: <%= unsafe_user_content %>"
     ERB
-  }
+  } +
 
-  # Adding a gen call to a transcript creates a callable prompt.
-  prompt = chatbot + gen
+  # Adding a gen call to a prompt makes it callable, optionally change the model
+  # for a single call.
+  prompt = prompt + gen(model: 'claude-3-5-sonnet-latest')
 
   # We can stream input to the user and capture the response.
   response = prompt.call do | streamed_response |
@@ -87,9 +88,9 @@ Or pull apart the prompt to create a streaming chatbot that handles user input s
   puts response
   # => "Sure, what do you need help with?"
 
-  # Add the response to the chat transcript.
-  transcript = prompt + response
-  puts transcript # =>
+  # Add the response to the prompt to continue the conversation.
+  prompt = prompt + response
+  puts prompt # =>
   # "system: You're a helpful chatbot.
   #  user: Hello, can you help me?
   #  assistant: Sure, what do you need help with?"
