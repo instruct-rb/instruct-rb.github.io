@@ -4,7 +4,7 @@ title: Introducing Instruct
 
 Instruct was inspired by Microsoft guidance with its natural interweaving of code and LLM completions, but it’s got Ruby flair and it’s own unique features.
 
-Here’s just one example of how you can use instruct to easily create a multi-turn agent conversations.
+Here’s an example of how you can use instruct to easily create a multi-turn agent conversations.
 
 ```ruby
   # Create two agents: Noel Gallagher and an interviewer with a system prompt.
